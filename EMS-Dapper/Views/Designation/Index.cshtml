@@ -1,0 +1,25 @@
+﻿@model List<Designation>
+
+<h2>Designations</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Designation Id</th>
+            <th>Designation Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Designation in Model)
+        {
+            <tr>
+                <td>@Designation.DesignationId</td>
+                <td>@Designation.DesignationName</td>
+                <td><a asp-controller="Designation" asp-action="EditDesignation" asp-route-id="@Designation.DesignationId">Update</a></td>
+                <td><a asp-controller="Designation" asp-action="DeleteDesignation" asp-route-id="@Designation.DesignationId">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="CreateDesignation" class="btn btn-primary">Add New Designation</a>

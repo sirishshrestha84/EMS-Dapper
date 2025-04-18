@@ -1,0 +1,38 @@
+﻿@model Employee
+<h1> Create Employee</h1>
+<form asp-action="CreateEmployee" asp-controller="Employee" method="post">
+    <label for="employeeName">Employee Name</label>
+    <input asp-for="@Model.EmployeeName">
+    <label for="employeeEmail">Email</label>
+    <input asp-for="@Model.Email" />
+
+    <!-- Department -->
+    <div class="form-group">
+        <label for="department">Department</label>
+        <select asp-for="@Model.DepartmentId">
+            @foreach (var department in ViewBag.DepartmentDropdownLists)
+            {
+                <option value="@department.DepartmentId">@department.Name</option>
+            }
+        </select>
+    </div>
+
+
+    <!-- Designation -->
+    <div>
+        <label for="designation">Designation</label>
+        <select asp-for="@Model.DesignationId">
+            @foreach (var designation in ViewBag.DesignationDropdownLists)
+            {
+                <option value="@designation.DesignationId">@designation.DesignationName</option>
+            }
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+        <input type="submit" value="Submit">
+    </div>
+
+</form>
+

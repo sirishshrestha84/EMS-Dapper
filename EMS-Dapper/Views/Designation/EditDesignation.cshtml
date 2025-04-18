@@ -1,0 +1,24 @@
+﻿@model Designation
+<h1> Update Designation</h1>
+<form asp-action="EditDesignation" asp-controller="Designation" method="post">
+    <input hidden asp-for="@Model.DesignationId" />
+    <div>
+        <label for="designation">Designation</label>
+        @* <select asp-for="@Model.DesignationId"> *@
+        @*     @foreach (var designation in (IEnumerable<Designation>)ViewData["DesignationDropdownLists"]) *@
+        @*     { *@
+        @*         <option value="@designation.DesignationId">@designation.DesignationName</option> *@
+        @*     } *@
+        @* </select> *@
+
+        <input asp-for="@Model.DesignationName" />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+        <input type="submit" value="Submit">
+    </div>
+
+</form>
+
+
