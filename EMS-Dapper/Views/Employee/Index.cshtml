@@ -1,6 +1,5 @@
 ﻿@model List<Employee>
 <h1>Employee Lists</h1>
-<a asp-controller="Employee" asp-action="CreateEmployee">Create Employee</a>
 <table class="table">
     <thead>
         <tr>
@@ -29,4 +28,5 @@
         }
     </tbody>
 </table>
+<a asp-controller="Employee" asp-action="CreateEmployee" class="btn btn-primary">Add New Employee</a>
 

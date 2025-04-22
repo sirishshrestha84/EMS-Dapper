@@ -16,6 +16,25 @@ namespace EMS_Dapper.Controllers
         }
         public IActionResult Index()
         {
+            if(HttpContext.Session.GetInt32("UserId") != null)
+            {
+                using (var connection = _db.CreateConnection())
+                {
+                    //Call the user-defined function to get all employees
+                    string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
+
+                    //Fetch the employee data using Dapper
+                    IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
+
+                    //Return the data to the view
+                    return View(employeeList);
+                }
+            }
+
+            else
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
             //Using dapper
             //using (var connection = _db.CreateConnection())
             //{
@@ -27,17 +46,7 @@ namespace EMS_Dapper.Controllers
             //}
 
             //Using function
-            using (var connection = _db.CreateConnection())
-            {
-                //Call the user-defined function to get all employees
-                string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
-
-                //Fetch the employee data using Dapper
-                IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
-
-                //Return the data to the view
-                return View(employeeList);
-            }
+           
 
         }
 

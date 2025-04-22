@@ -1,0 +1,31 @@
+﻿@model EMS_Dapper.Models.Register
+
+<h2>Register</h2>
+
+<form asp-controller = "Authentication" asp-action="Register" method="post">
+    <div class="form-group">
+        <label>Email</label>
+        <input asp-for="UserEmail" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <input asp-for="UserPassword" type="password" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Role</label>
+        <select asp-for="Role" class="form-control">
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+
+    @if (ViewBag.Error != null)
+    {
+        <p class="text-danger">@ViewBag.Error</p>
+    }
+</form>
+

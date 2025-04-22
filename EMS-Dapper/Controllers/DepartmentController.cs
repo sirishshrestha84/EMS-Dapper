@@ -23,7 +23,7 @@ namespace EMS_Dapper.Controllers
             //}
 
             //Using function
-            using (var connection = _db.CreateConnection())
+                using (var connection = _db.CreateConnection())
             {
                 var departments = await connection.QueryAsync<Department>(
                     "SELECT * FROM dbo.GetAllDepartments()");
