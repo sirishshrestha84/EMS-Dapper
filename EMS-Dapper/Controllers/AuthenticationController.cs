@@ -1,8 +1,12 @@
 ﻿using Dapper;
 using EMS_Dapper.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Data.SqlClient;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace EMS_Dapper.Controllers
 {
@@ -72,34 +76,60 @@ namespace EMS_Dapper.Controllers
             using (var connection = _db.CreateConnection())
             {
 
+                //For using session 
+                //string query = "SELECT * FROM [User] WHERE UserEmail = @UserEmail AND UserPassword = @UserPassword";
+                //var user = await connection.QueryFirstOrDefaultAsync<User>(query, new { UserEmail = useremail, Userpassword = userpassword });
 
+                //if(user != null && BCrypt.Net.BCrypt.Verify(userpassword, user.HashPassword))
+                //{
+                //    //HttpContext.Session.SetInt32["UserId"] = user.UserId;
+                //    //Session["UserEmail"] = user.UserEmail;
+                //    //Session["UserPassword"] = user.UserPassword;
+                //    //Session["Role"] = user.Role;
+                //    //return RedirectToAction("Index");
+                //    HttpContext.Session.SetInt32("UserId", user.UserId);
+                //    HttpContext.Session.SetString("UserEmail", user.UserEmail);
+                //    //HttpContext.Session.SetString("UserPassword", user.UserPassword);
+                //    HttpContext.Session.SetString("Role", user.Role);
+
+                //    return RedirectToAction("Index","Home");
+
+                //For using Cookies
                 string query = "SELECT * FROM [User] WHERE UserEmail = @UserEmail AND UserPassword = @UserPassword";
                 var user = await connection.QueryFirstOrDefaultAsync<User>(query, new { UserEmail = useremail, Userpassword = userpassword });
 
-                if(user != null && BCrypt.Net.BCrypt.Verify(userpassword, user.HashPassword))
+                if (user != null && BCrypt.Net.BCrypt.Verify(userpassword, user.HashPassword))
                 {
-                    //HttpContext.Session.SetInt32["UserId"] = user.UserId;
-                    //Session["UserEmail"] = user.UserEmail;
-                    //Session["UserPassword"] = user.UserPassword;
-                    //Session["Role"] = user.Role;
-                    //return RedirectToAction("Index");
-                    HttpContext.Session.SetInt32("UserId", user.UserId);
-                    HttpContext.Session.SetString("UserEmail", user.UserEmail);
-                    //HttpContext.Session.SetString("UserPassword", user.UserPassword);
-                    HttpContext.Session.SetString("Role", user.Role);
+                    var claims = new List<Claim>
+                 {
+                     new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
+                     new Claim(ClaimTypes.Name,user.UserEmail),
+                     new Claim(ClaimTypes.Role,user.Role)
+                 };
 
-                    return RedirectToAction("Index","Home");
+                var identity = new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
 
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                    return RedirectToAction("Index", "Home");
                 }
-                ViewBag.Error = "Invalid Email or password.";
+            ViewBag.Error = "Invalid Email or password.";
                 return View();
 
             }
         }
 
-        public IActionResult logout()
+        //Session based
+        //public IActionResult logout()
+        //{
+        //    HttpContext.Session.Clear();
+        //    return RedirectToAction("Login");
+        //}
+
+        //Cookie based
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
 

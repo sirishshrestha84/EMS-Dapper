@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -34,7 +35,8 @@ namespace EMS_Dapper.Controllers
             }    
         }
         //GET : //Designation/Create
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateDesignation()
         {
             return View();
@@ -42,7 +44,8 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Designation/Create
         [HttpPost]
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDesignation(Designation designation)
         {
             if(ModelState.IsValid)
@@ -59,7 +62,8 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET: /Designation/Edit/{id}
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditDesignation(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -78,7 +82,8 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Designation/Edit
         [HttpPost]
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditDesignation(Designation designation)
         {
 
@@ -113,7 +118,8 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET : /Designation/Delete/{id}
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDesignation(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -131,7 +137,8 @@ namespace EMS_Dapper.Controllers
 
         //Post: //Designation/Delete/{id}}
         [HttpPost,ActionName("Delete")]
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Using dapper

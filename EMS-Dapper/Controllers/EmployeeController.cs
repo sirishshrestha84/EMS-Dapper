@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,24 +18,17 @@ namespace EMS_Dapper.Controllers
         }
         public IActionResult Index()
         {
-            if(HttpContext.Session.GetInt32("UserId") != null)
+
+            using (var connection = _db.CreateConnection())
             {
-                using (var connection = _db.CreateConnection())
-                {
-                    //Call the user-defined function to get all employees
-                    string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
+                //Call the user-defined function to get all employees
+                string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
 
-                    //Fetch the employee data using Dapper
-                    IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
+                //Fetch the employee data using Dapper
+                IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
 
-                    //Return the data to the view
-                    return View(employeeList);
-                }
-            }
-
-            else
-            {
-                return RedirectToAction("AccessDenied", "Home");
+                //Return the data to the view
+                return View(employeeList);
             }
             //Using dapper
             //using (var connection = _db.CreateConnection())
@@ -52,7 +46,8 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET : CREATE
-        [CustomAuthorize("Admin")] 
+        //[CustomAuthorize("Admin")] 
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> CreateEmployee()
         {
@@ -87,7 +82,9 @@ namespace EMS_Dapper.Controllers
             }
 
         //POST : Create
-        [HttpPost] [CustomAuthorize("Admin")]
+        [HttpPost]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee(Employee emp)
         {
             //Code for default dapper code format
@@ -123,7 +120,8 @@ namespace EMS_Dapper.Controllers
         }
 
         //Get :/Employee/Edit/{id}
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditEmployee(int id)
         {
             //Code for dapper default format
@@ -148,7 +146,8 @@ namespace EMS_Dapper.Controllers
 
         // POST: /Employee/Edit
         [HttpPost]
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditEmployee(Employee emp)
         {
             //Using dapper 
@@ -198,7 +197,7 @@ namespace EMS_Dapper.Controllers
         }
 
         // Get : /Employee/Delete/{id}
-        [CustomAuthorize("Admin")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -215,7 +214,8 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Employee/Delete/{id}
         [HttpPost, ActionName("Delete")]
-        [CustomAuthorize("Admin")]
+        //[CustomAuthorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Using dapper
