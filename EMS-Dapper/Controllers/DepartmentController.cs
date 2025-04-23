@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ namespace EMS_Dapper.Controllers
             }
         }
         //GET : //Department/Create
+        [CustomAuthorize("Admin")]
         public IActionResult CreateDepartment()
         {
             return View();
@@ -39,6 +41,7 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Department/Create
         [HttpPost]
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> CreateDepartment(Department department)
         {
             //Using dapper
@@ -71,6 +74,7 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET: /Department/Edit/{id}
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> EditDepartment(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -89,6 +93,7 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Department/Edit
         [HttpPost]
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> EditDepartment(Department department)
         {
             //Using dapper
@@ -122,6 +127,7 @@ namespace EMS_Dapper.Controllers
         }
 
         ////GET : /Department/Delete/{id}
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -139,6 +145,7 @@ namespace EMS_Dapper.Controllers
 
         ////Post: //Designation/Delete/{id}}
         [HttpPost, ActionName("Delete")]
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Using dapper

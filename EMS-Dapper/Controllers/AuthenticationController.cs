@@ -85,7 +85,7 @@ namespace EMS_Dapper.Controllers
                     //return RedirectToAction("Index");
                     HttpContext.Session.SetInt32("UserId", user.UserId);
                     HttpContext.Session.SetString("UserEmail", user.UserEmail);
-                    HttpContext.Session.SetString("UserPassword", user.UserPassword);
+                    //HttpContext.Session.SetString("UserPassword", user.UserPassword);
                     HttpContext.Session.SetString("Role", user.Role);
 
                     return RedirectToAction("Index","Home");
@@ -101,6 +101,12 @@ namespace EMS_Dapper.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
+        }
+
+        //Access denied action
+        public IActionResult ActionDenied()
+        {
+            return View();
         }
     }
 }
