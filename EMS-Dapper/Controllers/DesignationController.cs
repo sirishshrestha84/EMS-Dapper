@@ -35,8 +35,9 @@ namespace EMS_Dapper.Controllers
             }    
         }
         //GET : //Designation/Create
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public IActionResult CreateDesignation()
         {
             return View();
@@ -44,8 +45,9 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Designation/Create
         [HttpPost]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> CreateDesignation(Designation designation)
         {
             if(ModelState.IsValid)
@@ -62,8 +64,9 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET: /Designation/Edit/{id}
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> EditDesignation(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -82,8 +85,9 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Designation/Edit
         [HttpPost]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> EditDesignation(Designation designation)
         {
 
@@ -118,8 +122,9 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET : /Designation/Delete/{id}
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> DeleteDesignation(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -137,8 +142,9 @@ namespace EMS_Dapper.Controllers
 
         //Post: //Designation/Delete/{id}}
         [HttpPost,ActionName("Delete")]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Using dapper

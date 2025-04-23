@@ -46,8 +46,9 @@ namespace EMS_Dapper.Controllers
         }
 
         //GET : CREATE
-        //[CustomAuthorize("Admin")] 
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
 
         public async Task<IActionResult> CreateEmployee()
         {
@@ -83,8 +84,9 @@ namespace EMS_Dapper.Controllers
 
         //POST : Create
         [HttpPost]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> CreateEmployee(Employee emp)
         {
             //Code for default dapper code format
@@ -120,8 +122,9 @@ namespace EMS_Dapper.Controllers
         }
 
         //Get :/Employee/Edit/{id}
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> EditEmployee(int id)
         {
             //Code for dapper default format
@@ -146,8 +149,9 @@ namespace EMS_Dapper.Controllers
 
         // POST: /Employee/Edit
         [HttpPost]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> EditEmployee(Employee emp)
         {
             //Using dapper 
@@ -197,7 +201,9 @@ namespace EMS_Dapper.Controllers
         }
 
         // Get : /Employee/Delete/{id}
-         [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -214,8 +220,9 @@ namespace EMS_Dapper.Controllers
 
         //POST : /Employee/Delete/{id}
         [HttpPost, ActionName("Delete")]
-        //[CustomAuthorize("Admin")]
-        [Authorize(Roles = "Admin")]
+        //[CustomAuthorize("Admin")] //Custom Session based authorization
+        //[Authorize(Roles = "Admin")] //Cookies based authorization
+        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Using dapper
