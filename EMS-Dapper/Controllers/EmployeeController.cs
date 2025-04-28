@@ -22,21 +22,13 @@ namespace EMS_Dapper.Controllers
 
             using (var connection = _db.CreateConnection())
             {
-                //Calculate the OFFSET and LIMIT for pagination
-               var offset = (page -1) * pageSize;
+                var employees = connection.Query<Employee>(
+           "SELECT * FROM GetPagedEmployees1(@PageNumber, @PageSize)",
+           new { PageNumber = page, PageSize = pageSize }).ToList();
 
-                //Call the user-defined function to get all employees
-                string query = "SELECT * FROM dbo.Dp_GetAllEmployees() ORDER BY EmployeeName OFFSET @offset ROWS FETCH NEXT @PageSize  ROWS ONLY";
-                var employees = connection.Query<Employee>(query, new {Offset = offset,PageSize = pageSize}).ToList();
-
-                //Get the total number of employees for pagnation calculation
-                var totalCountQuery = "SELECT COUNT(*) FROM dbo.Dp_GetAllEmployees()";
-                var totalCount = connection.ExecuteScalar<int>(totalCountQuery);
-
-                //Calculate the total number of pages
+                var totalCount = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM Employees");
                 var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-                // Pass the data and pagination info to the view
                 var model = new Pager
                 {
                     Employees = employees,
@@ -45,10 +37,8 @@ namespace EMS_Dapper.Controllers
                     PageSize = pageSize
                 };
 
-                //Return the data to the view
                 return View(model);
             }
-
         }
         //public IActionResult Index()
         //{
