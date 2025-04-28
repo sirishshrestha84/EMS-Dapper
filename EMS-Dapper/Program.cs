@@ -1,5 +1,9 @@
-using EMS_Dapper;
+﻿using EMS_Dapper;
+using EMS_Dapper.Filter;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,19 +19,109 @@ builder.Services.AddScoped<DapperApplicationDbContext>();
 //    options.Cookie.IsEssential = true;
 //});
 
-//Cookies 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) //This is cookie
-    .AddCookie( options =>
-    {
-        options.LoginPath = "/Authentication/Login";
-        options.AccessDeniedPath = "/Authentication/ActionDenied";
-        options.Cookie.Name = "EMS_Auth";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-        options.SlidingExpiration = true;
-        options.Cookie.SameSite = SameSiteMode.Strict;
-    });
+//Read Jwt Setting frm config
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["SecretKey"];
 
-builder.Services.AddAuthentication();
+//Cookies 
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) //This is cookie
+//    .AddCookie( options =>
+//    {
+//        options.LoginPath = "/Authentication/Login";
+//        options.AccessDeniedPath = "/Authentication/ActionDenied";
+//        options.Cookie.Name = "EMS_Auth";
+//        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+//        options.SlidingExpiration = true;
+//        options.Cookie.SameSite = SameSiteMode.Strict;
+//    });
+
+
+////JWT Authentication
+//var key = Encoding.ASCII.GetBytes(builder.Configuration["jwt setting : Secretkey"]);
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.RequireHttpsMetadata = false;
+//        options.SaveToken = true;
+//        options.Events = new JwtBearerEvents
+//        {
+//            OnMessageReceived = context =>
+//            {
+//                //Extract Jwt From Cookies instead of Authorzation header
+//                var token = context.Request.Cookies["AuthToken"];
+//                if (!string.IsNullOrEmpty(token))
+//                {
+//                    context.Token = token;
+//                }
+//                return Task.CompletedTask;
+//            }
+//        };
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            IssuerSigningKey = new SymmetricSecurityKey(key),
+//            ValidIssuer = builder.Configuration["jwt setting: Issuer"],
+//            ValidAudience = builder.Configuration["jwt setting : Audience"],
+//            ClockSkew = TimeSpan.Zero
+//        };
+//    });
+
+
+//Combined authentication Setup
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // ✅ Get JWT from cookie instead of Authorization header
+            var token = context.Request.Cookies["AuthToken"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events.OnChallenge = context =>
+    {
+        context.HandleResponse();
+        context.Response.Redirect("/Authentication/ActionDenied");
+        return Task.CompletedTask;
+    };
+});
+
+//Add Authorization
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+//    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+//});
+
+
+builder.Services.AddAuthorization();
+//builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 

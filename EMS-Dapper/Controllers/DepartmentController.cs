@@ -36,7 +36,8 @@ namespace EMS_Dapper.Controllers
         //GET : //Department/Create
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateDepartment()
         {
             return View();
@@ -46,7 +47,8 @@ namespace EMS_Dapper.Controllers
         [HttpPost]
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDepartment(Department department)
         {
             //Using dapper
@@ -81,7 +83,8 @@ namespace EMS_Dapper.Controllers
         //GET: /Department/Edit/{id}
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditDepartment(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -102,7 +105,8 @@ namespace EMS_Dapper.Controllers
         [HttpPost]
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> EditDepartment(Department department)
         {
@@ -139,7 +143,8 @@ namespace EMS_Dapper.Controllers
         ////GET : /Department/Delete/{id}
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             using (var connection = _db.CreateConnection())
@@ -159,7 +164,8 @@ namespace EMS_Dapper.Controllers
         [HttpPost, ActionName("Delete")]
         //[CustomAuthorize("Admin")] //Custom Session based authorization
         //[Authorize(Roles = "Admin")] //Cookies based authorization
-        [CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        //[CookiesCustomAuthorize("Admin")] //Custom cookies based authorization
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Using dapper

@@ -19,16 +19,15 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @* @if (Context.Session.GetInt32("UserId") != null) *@
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employee</a>
                             </li>
@@ -39,10 +38,10 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Department</a>
                             </li>
                         }
+
                     </ul>
                     <ul class= "navbar-nav ms-auto">
-                        
-                        @* @if(Context.Session.GetInt32("UserId") != null) *@
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
@@ -51,6 +50,7 @@
                         }
                         else
                         {
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Authentication" asp-action="Login">LogIn</a>
                             </li>
@@ -58,6 +58,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Authentication" asp-action="Register">Register</a>
                             </li>
                         }
+
 
                         </ul>
                 </div>
