@@ -16,34 +16,68 @@ namespace EMS_Dapper.Controllers
         {
             _db = db;
         }
-        public IActionResult Index()
+
+        public IActionResult Index( int page =1, int pageSize =5)
         {
 
             using (var connection = _db.CreateConnection())
             {
-                //Call the user-defined function to get all employees
-                string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
+                //Calculate the OFFSET and LIMIT for pagination
+               var offset = (page -1) * pageSize;
 
-                //Fetch the employee data using Dapper
-                IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
+                //Call the user-defined function to get all employees
+                string query = "SELECT * FROM dbo.Dp_GetAllEmployees() ORDER BY EmployeeName OFFSET @offset ROWS FETCH NEXT @PageSize  ROWS ONLY";
+                var employees = connection.Query<Employee>(query, new {Offset = offset,PageSize = pageSize}).ToList();
+
+                //Get the total number of employees for pagnation calculation
+                var totalCountQuery = "SELECT COUNT(*) FROM dbo.Dp_GetAllEmployees()";
+                var totalCount = connection.ExecuteScalar<int>(totalCountQuery);
+
+                //Calculate the total number of pages
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                // Pass the data and pagination info to the view
+                var model = new Pager
+                {
+                    Employees = employees,
+                    CurrentPage = page,
+                    TotalPages = totalPages,
+                    PageSize = pageSize
+                };
 
                 //Return the data to the view
-                return View(employeeList);
+                return View(model);
             }
-            //Using dapper
-            //using (var connection = _db.CreateConnection())
-            //{
-            //    string query = "Select a.Id,a.Name as EmployeeName, a.Email, a.DepartmentId,a.DesignationId, b.Name as DepartmentName, c.DesignationName from Employees as a inner join Departments as b on b.DepartmentId = a.DepartmentId \r\n   " +
-            //        "                 inner join Designations as c on c.DesignationId = a.DesignationId ";
-            //    connection.Open();
-            //    IEnumerable<Employee> emplists = connection.Query<Employee>(query);
-            //    return View(emplists);
-            //}
-
-            //Using function
-           
 
         }
+        //public IActionResult Index()
+        //{
+
+        //    using (var connection = _db.CreateConnection())
+        //    {
+        //        //Call the user-defined function to get all employees
+        //        string query = "SELECT * FROM dbo.Dp_GetAllEmployees()";
+
+        //        //Fetch the employee data using Dapper
+        //        IEnumerable<Employee> employeeList = connection.Query<Employee>(query);
+
+        //        //Return the data to the view
+        //        return View(employeeList);
+        //    }
+        //    //Using dapper
+        //    //using (var connection = _db.CreateConnection())
+        //    //{
+        //    //    string query = "Select a.Id,a.Name as EmployeeName, a.Email, a.DepartmentId,a.DesignationId, b.Name as DepartmentName, c.DesignationName from Employees as a inner join Departments as b on b.DepartmentId = a.DepartmentId \r\n   " +
+        //    //        "                 inner join Designations as c on c.DesignationId = a.DesignationId ";
+        //    //    connection.Open();
+        //    //    IEnumerable<Employee> emplists = connection.Query<Employee>(query);
+        //    //    return View(emplists);
+        //    //}
+
+        //    //Using function
+
+
+        //}
 
         //GET : CREATE
         //[CustomAuthorize("Admin")] //Custom Session based authorization
