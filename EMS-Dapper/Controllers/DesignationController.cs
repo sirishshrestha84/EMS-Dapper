@@ -2,6 +2,7 @@
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
 using EMS_Dapper.Repository.IRepository;
+using EMS_Dapper.Unit_Of_Work;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -180,16 +181,16 @@ namespace EMS_Dapper.Controllers
     //}
     public class DesignationController : Controller
     {
-        private readonly IDesignationRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DesignationController(IDesignationRepository repository)
+        public DesignationController(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IActionResult> Index()
         {
-            var designations = await _repository.GetAllAsync();
+            var designations = await _unitOfWork.Designation.GetAllAsync();
             return View(designations.ToList());
         }
 
@@ -202,7 +203,7 @@ namespace EMS_Dapper.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.CreateAsync(designation);
+                await _unitOfWork.Designation.CreateAsync(designation);
                 return RedirectToAction("Index");
             }
             return View(designation);
@@ -211,7 +212,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditDesignation(int id)
         {
-            var designation = await _repository.GetByIdAsync(id);
+            var designation = await _unitOfWork.Designation.GetByIdAsync(id);
             if (designation == null) return NotFound();
             return View(designation);
         }
@@ -222,7 +223,7 @@ namespace EMS_Dapper.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.UpdateAsync(designation);
+                await _unitOfWork.Designation.UpdateAsync(designation);
                 return RedirectToAction("Index");
             }
             return View(designation);
@@ -231,7 +232,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDesignation(int id)
         {
-            var designation = await _repository.GetByIdAsync(id);
+            var designation = await _unitOfWork.Designation.GetByIdAsync(id);
             if (designation == null) return NotFound();
             return View(designation);
         }
@@ -240,7 +241,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.Designation.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

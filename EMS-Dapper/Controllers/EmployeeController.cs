@@ -2,6 +2,7 @@
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
 using EMS_Dapper.Repository.IRepository;
+using EMS_Dapper.Unit_Of_Work;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
@@ -278,17 +279,17 @@ namespace EMS_Dapper.Controllers
     //}
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeController(IEmployeeRepository repository)
+        public EmployeeController(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
-            var employees = await _repository.GetPagedEmployeesAsync(page, pageSize);
-            var totalCount = await _repository.GetTotalEmployeeCountAsync();
+            var employees = await _unitOfWork.Employee.GetPagedEmployeesAsync(page, pageSize);
+            var totalCount = await _unitOfWork.Employee.GetTotalEmployeeCountAsync();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
             var model = new Pager
@@ -305,8 +306,8 @@ namespace EMS_Dapper.Controllers
 
         public async Task<IActionResult> CreateEmployee()
         {
-            ViewBag.DepartmentDropdownLists = (await _repository.GetDepartmentsAsync()).ToList();
-            ViewBag.DesignationDropdownLists = (await _repository.GetDesignationsAsync()).ToList();
+            ViewBag.DepartmentDropDownLists = (await _unitOfWork.Employee.GetDepartmentsAsync()).ToList();
+            ViewBag.DesignationDropDownLists = (await _unitOfWork.Employee.GetDesignationsAsync()).ToList();
             return View();
         }
 
@@ -317,12 +318,12 @@ namespace EMS_Dapper.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.CreateEmployeeAsync(emp);
+                await _unitOfWork.Employee.CreateEmployeeAsync(emp);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DepartmentDropDownLists = (await _repository.GetDepartmentsAsync()).ToList();
-            ViewBag.DesignationDropDownLists = (await _repository.GetDesignationsAsync()).ToList();
+            ViewBag.DepartmentDropDownLists = (await _unitOfWork.Employee.GetDepartmentsAsync()).ToList();
+            ViewBag.DesignationDropDownLists = (await _unitOfWork.Employee.GetDesignationsAsync()).ToList();
             return View(emp);
         }
 
@@ -330,13 +331,13 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditEmployee(int id)
         {
-            var emp = await _repository.GetEmployeeByIdAsync(id);
+            var emp = await _unitOfWork.Employee.GetEmployeeByIdAsync(id);
             if (emp == null)
             { 
                 return NotFound();
             }
-            ViewBag.DepartmentDropdownLists = (await _repository.GetDepartmentsAsync()).ToList();
-            ViewBag.DesignationDropdownLists = (await _repository.GetDesignationsAsync()).ToList();
+            ViewBag.DepartmentDropdownLists = (await _unitOfWork.Employee.GetDepartmentsAsync()).ToList();
+            ViewBag.DesignationDropdownLists = (await _unitOfWork.Employee.GetDesignationsAsync()).ToList();
 
             return View(emp);
         }
@@ -349,11 +350,11 @@ namespace EMS_Dapper.Controllers
         {
             if (ModelState.IsValid)
             { 
-                await _repository.UpdateEmployeeAsync(emp);
+                await _unitOfWork.Employee.UpdateEmployeeAsync(emp);
                 return RedirectToAction("Index");
             }
-            ViewBag.DepartmentDropdownLists = (await _repository.GetDepartmentsAsync()).ToList();
-            ViewBag.DesignationDropdownLists = (await _repository.GetDesignationsAsync()).ToList();
+            ViewBag.DepartmentDropdownLists = (await _unitOfWork.Employee.GetDepartmentsAsync()).ToList();
+            ViewBag.DesignationDropdownLists = (await _unitOfWork.Employee.GetDesignationsAsync()).ToList();
 
             return View(emp);
 
@@ -363,7 +364,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
-            var emp = await _repository.GetEmployeeByIdAsync(id);
+            var emp = await _unitOfWork.Employee.GetEmployeeByIdAsync(id);
             if(emp == null)
             {
                 return NotFound();
@@ -377,7 +378,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _repository.DeleteEmployeeAsync(id);
+            await _unitOfWork.Employee.DeleteEmployeeAsync(id);
             return RedirectToAction("Index");
         }
 

@@ -4,7 +4,7 @@ namespace EMS_Dapper.Models
 {
     public class Employee
     {
-   
+
         public int Id { get; set; }
 
         public string EmployeeName { get; set; } = string.Empty;
@@ -13,7 +13,7 @@ namespace EMS_Dapper.Models
         public string DepartmentName { get; set; } = string.Empty;
 
         public int DepartmentId { get; set; }
- 
+
         public int DesignationId { get; set; }
 
     }

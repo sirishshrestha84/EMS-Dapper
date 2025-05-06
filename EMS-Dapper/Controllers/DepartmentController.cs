@@ -2,6 +2,7 @@
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
 using EMS_Dapper.Repository.IRepository;
+using EMS_Dapper.Unit_Of_Work;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -191,16 +192,16 @@ namespace EMS_Dapper.Controllers
     //}
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DepartmentController(IDepartmentRepository repository)
+        public DepartmentController(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IActionResult> Index()
         {
-            var departments = await _repository.GetAllAsync();
+            var departments = await _unitOfWork.Department.GetAllAsync();
             return View(departments.ToList());
         }
         [Authorize(Roles = "Admin")]
@@ -212,7 +213,7 @@ namespace EMS_Dapper.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.CreateAsync(department);
+                await _unitOfWork.Department.CreateAsync(department);
                 return RedirectToAction("Index");
             }
             return View(department);
@@ -221,7 +222,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditDepartment(int id)
         {
-            var department = await _repository.GetByIdAsync(id);
+            var department = await _unitOfWork.Department.GetByIdAsync(id);
             if (department == null)
             {
                 return NotFound();
@@ -235,7 +236,7 @@ namespace EMS_Dapper.Controllers
         {
             if(ModelState.IsValid)
             {
-                await _repository.UpdateAsync(department);
+                await _unitOfWork.Department.UpdateAsync(department);
                 return RedirectToAction("Index");
             }
             return View(department);
@@ -244,7 +245,7 @@ namespace EMS_Dapper.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var department = await _repository.GetByIdAsync(id);
+            var department = await _unitOfWork.Department.GetByIdAsync(id);
             if(department == null)
             {
                 return NotFound();
@@ -257,7 +258,7 @@ namespace EMS_Dapper.Controllers
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _repository.DeleteAsync(id);
+            await _unitOfWork.Department.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }
