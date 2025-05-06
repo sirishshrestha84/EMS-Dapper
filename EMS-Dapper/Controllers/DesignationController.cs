@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using EMS_Dapper.Filter;
 using EMS_Dapper.Models;
+using EMS_Dapper.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -177,5 +178,70 @@ namespace EMS_Dapper.Controllers
 
     //    }
     //}
+    public class DesignationController : Controller
+    {
+        private readonly IDesignationRepository _repository;
 
+        public DesignationController(IDesignationRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var designations = await _repository.GetAllAsync();
+            return View(designations.ToList());
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateDesignation() => View();
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateDesignation(Designation designation)
+        {
+            if (ModelState.IsValid)
+            {
+                await _repository.CreateAsync(designation);
+                return RedirectToAction("Index");
+            }
+            return View(designation);
+        }       
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditDesignation(int id)
+        {
+            var designation = await _repository.GetByIdAsync(id);
+            if (designation == null) return NotFound();
+            return View(designation);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditDesignation(Designation designation)
+        {
+            if (ModelState.IsValid)
+            {
+                await _repository.UpdateAsync(designation);
+                return RedirectToAction("Index");
+            }
+            return View(designation);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDesignation(int id)
+        {
+            var designation = await _repository.GetByIdAsync(id);
+            if (designation == null) return NotFound();
+            return View(designation);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _repository.DeleteAsync(id);
+            return RedirectToAction("Index");
+        }
+    }
 }

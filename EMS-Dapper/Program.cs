@@ -16,6 +16,9 @@ builder.Services.AddScoped<DapperApplicationDbContext>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
+builder.Services.AddScoped<IDesignationRepository, DesignationRepository>();
+
+
 ////Session 
 //builder.Services.AddSession(options =>
 //{
