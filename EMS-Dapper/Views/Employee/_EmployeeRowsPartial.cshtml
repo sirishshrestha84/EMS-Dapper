@@ -1,0 +1,17 @@
+﻿@model IEnumerable<EMS_Dapper.Models.Employee>
+
+@foreach (var emp in Model)
+{
+    <tr>
+        <td>@emp.EmployeeName</td>
+        <td>@emp.Email</td>
+        <td>@emp.DepartmentName</td>
+        <td>@emp.DesignationName</td>
+        <td>
+            <a href="@Url.Action("EditEmployee", "Employee", new { id = emp.Id })" class="btn btn-warning btn-sm">Edit</a>
+            <button class="btn btn-danger btn-sm delete-btn" data-id="@emp.Id">Delete</button>
+        </td>
+    </tr>
+}
+
+
