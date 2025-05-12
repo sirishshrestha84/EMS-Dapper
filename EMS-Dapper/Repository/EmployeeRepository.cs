@@ -77,5 +77,18 @@ namespace EMS_Dapper.Repository
             using var connection = _context.CreateConnection();
             return await connection.QueryAsync<Designation>("SELECT * FROM Designations");
         }
+
+        //Action to show employee in department in chart format
+        public async Task<IEnumerable<DepartmentChartData>> GetEmployeeCountByDepartmentAsync()
+        {
+            var sql = @"
+        SELECT d.Name AS DepartmentName, COUNT(e.Id) AS EmployeeCount
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+        GROUP BY d.Name
+    ";
+            using var connection = _context.CreateConnection();
+            return await connection.QueryAsync<DepartmentChartData>(sql);
+        }
     }
 }

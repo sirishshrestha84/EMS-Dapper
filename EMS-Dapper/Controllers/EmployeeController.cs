@@ -529,7 +529,7 @@ namespace EMS_Dapper.Controllers
 
         //For ajax
         [HttpGet]
-        public async Task<IActionResult> GetPagedEmployees(int page =1, int pageSize = 5)
+        public async Task<IActionResult> GetPagedEmployees(int page = 1, int pageSize = 5)
         {
             var employees = await _unitOfWork.Employee.GetPagedEmployeesAsync(page, pageSize);
             var totalCount = await _unitOfWork.Employee.GetTotalEmployeeCountAsync();
@@ -636,8 +636,18 @@ namespace EMS_Dapper.Controllers
             return RedirectToAction("Index");
         }
 
-    }
+        public async Task<IActionResult> GetDepartmentChartData()
+        {
+            var data = await _unitOfWork.Employee.GetEmployeeCountByDepartmentAsync();
+            return Json(data.Select(d => new
+            {
+                departmentName = d.DepartmentName,
+                employeeCount = d.EmployeeCount
+            }));
 
+        }
+
+    }
 }
 
 

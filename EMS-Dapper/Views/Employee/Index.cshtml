@@ -289,6 +289,59 @@
 
 @model EMS_Dapper.Models.Pager
 
+<h4>Employees per Department</h4>
+<canvas id="departmentChart" width="500" height="350"></canvas>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $.get('/Employee/GetDepartmentChartData', function (data) {
+            const labels = data.map(d => d.departmentName);
+            const values = data.map(d => d.employeeCount);
+
+            const ctx = document.getElementById('departmentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Employees per Department',
+                        data: values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,  // Disable aspect ratio to allow resizing
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Employee Count by Department'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+    
+
+
+
 <h2>Employee List</h2>
 
 <table class="table table-bordered" id="employeeTable">
@@ -386,6 +439,15 @@
         });
     });
 </script>
+
+<style>
+    #departmentChart {
+        max-width: 500px;
+        max-height: 300px;
+        width: 100%;
+        height: auto;
+    }
+</style>
 
 
 
