@@ -1,4 +1,5 @@
 ﻿using EMS_Dapper.Models;
+using System.Threading.Tasks;
 
 namespace EMS_Dapper.Repository.IRepository
 {
@@ -14,5 +15,7 @@ namespace EMS_Dapper.Repository.IRepository
         Task<IEnumerable<Department>> GetDepartmentsAsync();
         Task<IEnumerable<Designation>> GetDesignationsAsync();
         Task<IEnumerable<DepartmentChartData>> GetEmployeeCountByDepartmentAsync();
+
+        Task<IEnumerable<DesignationChartData>> GetEmployeeCountByDesignationAsync();
     }
 }

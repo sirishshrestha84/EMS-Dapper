@@ -289,13 +289,23 @@
 
 @model EMS_Dapper.Models.Pager
 
-<h4>Employees per Department</h4>
-<canvas id="departmentChart" width="500" height="350"></canvas>
+
+<!-- Container for Charts -->
+<div class="chart-container">
+    <div class="chart-item">
+        <canvas id="departmentChart" width="500" height="350"></canvas>
+    </div>
+
+    <div class="chart-item">
+        <canvas id="designationChart" width="500" height="350"></canvas>
+    </div>
+</div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+@* Fetch and render Department chart *@
 <script>
     $(document).ready(function () {
         $.get('/Employee/GetDepartmentChartData', function (data) {
@@ -329,6 +339,52 @@
                         y: {
                             beginAtZero: true,
                             precision: 0
+                        }
+                    }
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        // Fetch the data for Designation chart
+        $.get('/Employee/GetDesignationChartData', function (data) {
+            console.log('Designation Chart Data:', data);  // Debugging the response
+
+            // Prepare labels and values for the chart
+            const labels = data.map(d => d.designationName);
+            const values = data.map(d => d.employeeCount);
+
+            // Get the context of the canvas element
+            const ctx = document.getElementById('designationChart').getContext('2d');
+
+            // Create the chart
+            new Chart(ctx, {
+                type: 'bar', // Chart type
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Employees per Designation',
+                        data: values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Disable aspect ratio for resizing
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Employee Count by Designation'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,  // Start the Y-axis from zero
+                            precision: 0        // Remove decimal precision for counts
                         }
                     }
                 }
@@ -445,6 +501,27 @@
         max-width: 500px;
         max-height: 300px;
         width: 100%;
+        height: auto;
+    }
+
+    #designationChart {
+        max-width: 500px;
+        max-height: 300px;
+        width: 100%;
+        height: auto;
+    }
+
+    /* Style for chart container to display side by side */
+    .chart-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px; /* Adds spacing between the two charts */
+    }
+
+    /* Style for each chart item (canvas) */
+    .chart-item {
+        flex: 1; /* Makes the canvas take equal space */
+        max-width: 45%; /* Optional: Controls the maximum width of each chart */
         height: auto;
     }
 </style>

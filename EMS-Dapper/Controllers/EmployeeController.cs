@@ -647,6 +647,20 @@ namespace EMS_Dapper.Controllers
 
         }
 
+        public async Task<IActionResult> GetDesignationChartData()
+        {
+            // Fetch data grouped by designation
+            var data = await _unitOfWork.Employee.GetEmployeeCountByDesignationAsync();
+
+            // Return the data in the required format for the chart
+            return Json(data.Select(d => new
+            {
+                designationName = d.DesignationName,  // Make sure your model has this property
+                employeeCount = d.EmployeeCount
+            }));
+        }
+
+
     }
 }
 
