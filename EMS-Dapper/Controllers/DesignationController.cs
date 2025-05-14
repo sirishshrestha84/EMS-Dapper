@@ -244,5 +244,18 @@ namespace EMS_Dapper.Controllers
             await _unitOfWork.Designation.DeleteAsync(id);
             return RedirectToAction("Index");
         }
+
+        //Endpoint for Jquery and Ajax
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDesignationAjax(int id)
+        {
+            var designation = await _unitOfWork.Designation.GetByIdAsync(id);
+            if (designation == null)
+                return Json(new { success = false, message = "Designation not found." });
+
+            await _unitOfWork.Designation.DeleteAsync(id);
+            return Json(new { success = true });
+        }
     }
 }

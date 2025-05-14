@@ -2,25 +2,69 @@
 
 <h2>Designations</h2>
 
-<table class="table">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Designation Id</th>
             <th>Designation Name</th>
-            <th>Action</th>
+            <th colspan="2">Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var Designation in Model)
         {
-            <tr>
+            <tr id="row-@Designation.DesignationId">
                 <td>@Designation.DesignationId</td>
                 <td>@Designation.DesignationName</td>
-                <td><a asp-controller="Designation" asp-action="EditDesignation" asp-route-id="@Designation.DesignationId">Update</a></td>
-                <td><a asp-controller="Designation" asp-action="DeleteDesignation" asp-route-id="@Designation.DesignationId">Delete</a></td>
+                <td>
+                    <a asp-controller="Designation" asp-action="EditDesignation" asp-route-id="@Designation.DesignationId" class="btn btn-sm btn-warning">Update</a>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-desig-btn" data-id="@Designation.DesignationId">Delete</button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <a asp-action="CreateDesignation" class="btn btn-primary">Add New Designation</a>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.delete-desig-btn').on('click', function (e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Designation/DeleteDesignationAjax', { id: id }, function (res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', 'Designation has been deleted.', 'success').then(() => {
+                                    $('#row-' + id).fadeOut(500, function () {
+                                        $(this).remove();
+                                    });
+                                });
+                            } else {
+                                Swal.fire('Error!', res.message, 'error');
+                            }
+                        }).fail(function () {
+                            Swal.fire('Error!', 'Server error occurred.', 'error');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
