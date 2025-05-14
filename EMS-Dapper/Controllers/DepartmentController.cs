@@ -261,5 +261,18 @@ namespace EMS_Dapper.Controllers
             await _unitOfWork.Department.DeleteAsync(id);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDepartmentAjax(int id)
+        {
+            var department = await _unitOfWork.Department.GetByIdAsync(id);
+            if(department == null)
+            {
+                return Json(new { sucess = false, message = "Department no found." });
+            }
+            await _unitOfWork.Department.DeleteAsync(id);
+            return Json(new { success = true });
+        }
     }
     }

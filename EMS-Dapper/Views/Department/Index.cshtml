@@ -1,13 +1,17 @@
 ﻿@model List<Department>
 
+    @{
+        ViewData["Title"] = "Departments";
+    }
+
 <h1>Departments</h1>
 
-<table class="table">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>Department ID</th>
             <th>Department Name</th>
-            <th>Action</th>
+            <th colspan="2">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -16,11 +20,53 @@
             <tr>
                 <td>@Department.DepartmentId</td>
                 <td>@Department.Name</td>
-                <td><a asp-controller="Department" asp-action="EditDepartment" asp-route-id="@Department.DepartmentId">Update</a></td>
-                <td><a asp-controller="Department" asp-action="DeleteDepartment" asp-route-id="@Department.DepartmentId">Delete</a></td>
+                <td>
+                    <a asp-controller="Department" asp-action="EditDepartment" asp-route-id="@Department.DepartmentId" class="btn btn-sm btn-warning">Edit</a>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-dept-btn" data-id="@Department.DepartmentId">Delete</button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <a asp-action="CreateDepartment" class="btn btn-primary">Add New Department</a>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.delete-dept-btn').on('click', function (e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon : 'warning',
+                     showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Department/DeleteDepartmentAjax', { id: id }, function (res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', 'Department has been deleted.', 'success').then(() => {
+                                    location.reload();
+                                });
+                                } else {
+                                Swal.fire('Error!', res.message, 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
+    
+}
