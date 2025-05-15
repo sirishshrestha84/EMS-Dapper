@@ -660,6 +660,18 @@ namespace EMS_Dapper.Controllers
             }));
         }
 
+        public async Task<IActionResult> DownloadEmployeeTable()
+        {
+            var employees = await _unitOfWork.Employee.GetAllEmployeesAsync();
+
+            return new Rotativa.AspNetCore.ViewAsPdf("EmployeePdf", employees.ToList())
+            {
+                FileName = "Employee_List.pdf",
+                PageSize = Rotativa.AspNetCore.Options.Size.A4,
+                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
+            };
+        }
+
 
     }
 }

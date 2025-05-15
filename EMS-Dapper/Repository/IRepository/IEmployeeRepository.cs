@@ -6,7 +6,9 @@ namespace EMS_Dapper.Repository.IRepository
     public interface IEmployeeRepository 
     {
         Task<IEnumerable<Employee>> GetPagedEmployeesAsync(int pageNumber, int pageSize);
+        Task<IEnumerable<Employee>> GetAllEmployeesAsync();
         Task<int> GetTotalEmployeeCountAsync();
+        
         Task<Employee> GetEmployeeByIdAsync(int id);
         Task CreateEmployeeAsync(Employee employee);
         Task UpdateEmployeeAsync(Employee employee);

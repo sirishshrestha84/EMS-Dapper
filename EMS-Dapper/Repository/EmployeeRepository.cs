@@ -101,5 +101,20 @@ namespace EMS_Dapper.Repository
             using var connection = _context.CreateConnection();
             return await connection.QueryAsync<DesignationChartData>(sql);
         }
+
+        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var sql = @"
+                          SELECT e.Id, e.Name AS EmployeeName, e.Email,
+                          d.Name AS DepartmentName,
+                          des.DesignationName
+                          FROM Employees e
+                          INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+                          INNER JOIN Designations des ON e.DesignationId = des.DesignationId";
+                return await connection.QueryAsync<Employee>(sql);
+            }
+        }
     }
 }

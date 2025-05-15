@@ -6,9 +6,11 @@ using EMS_Dapper.Unit_Of_Work;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Rotativa.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -134,6 +136,9 @@ builder.Services.AddAuthorization();
 //builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+//Rotativa 
+RotativaConfiguration.Setup(app.Environment.WebRootPath, "Rotativa");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
