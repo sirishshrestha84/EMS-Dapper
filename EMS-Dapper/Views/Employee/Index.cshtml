@@ -412,10 +412,12 @@
     </thead>
     <tbody id="employeeTableBody">
         @await Html.PartialAsync("_EmployeeRowsPartial", Model.Employees)
-        <a href="@Url.Action("DownloadEmployeeTable", "Employee")" class="btn btn-success mb-3">
-            <i class="fa fa-download"></i> Download PDF
-        </a>
-    </tbody>
+        <div class="mb-3 d-flex gap-2">
+            <a href="@Url.Action("DownloadEmployeeTable", "Employee")" class="btn btn-success">
+                <i class="fa fa-download"></i> Download PDF
+            </a>
+            <a class="btn btn-success" href="@Url.Action("ExportToExcel", "Employee")">Export to Excel</a>
+        </div>
 </table>
 
 <div class="pagination justify-content-end" id="paginationControls">
