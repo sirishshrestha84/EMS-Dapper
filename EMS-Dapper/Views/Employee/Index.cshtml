@@ -399,10 +399,6 @@
 
 
 <h2>Employee List</h2>
-
-
-
-
 <div class="container">
     <form method="get" class="form-inline mb-3">
         <label for="pageSize" class="mr-2">Rows per page:</label>
@@ -427,136 +423,135 @@
         <input type="hidden" name="page" value="@Model.CurrentPage" />
     </form>
 
-<table class="table table-bordered" id="employeeTable">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Designation</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody id="employeeTableBody">
-        @await Html.PartialAsync("_EmployeeRowsPartial", Model.Employees)
-        <div class="mb-3 d-flex gap-2">
-            <a href="@Url.Action("DownloadEmployeeTable", "Employee")" class="btn btn-success">
-                <i class="fa fa-download"></i> Download PDF
-            </a>
-            <a class="btn btn-success" href="@Url.Action("ExportToExcel", "Employee")">Export to Excel</a>
-        </div>
-</table>
+    <table class="table table-bordered" id="employeeTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTableBody">
+            @await Html.PartialAsync("_EmployeeRowsPartial", Model.Employees)
+            <div class="mb-3 d-flex gap-2">
+                <a href="@Url.Action("DownloadEmployeeTable", "Employee")" class="btn btn-success">
+                    <i class="fa fa-download"></i> Download PDF
+                </a>
+                <a class="btn btn-success" href="@Url.Action("ExportToExcel", "Employee")">Export to Excel</a>
+            </div>
+    </table>
 
-<div class="pagination justify-content-end" id="paginationControls">
-    <ul class="pagination">
-        @if (Model.CurrentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="1">First</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="@(Model.CurrentPage - 1)">Previous</a>
-            </li>
-        }
+    <div class="pagination justify-content-end" id="paginationControls">
+        <ul class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="@(Model.CurrentPage - 1)">Previous</a>
+                </li>
+            }
 
-        @for (var i = 1; i <= Model.TotalPages; i++)
-        {
-            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                <a class="page-link" href="#" data-page="@i">@i</a>
-            </li>
-        }
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="#" data-page="@i">@i</a>
+                </li>
+            }
 
-        @if (Model.CurrentPage < Model.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="@(Model.CurrentPage + 1)">Next</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="@Model.TotalPages">Last</a>
-            </li>
-        }
-    </ul>
-</div>
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="@(Model.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="@Model.TotalPages">Last</a>
+                </li>
+            }
+        </ul>
+    </div>
 
-<a href="@Url.Action("CreateEmployee", "Employee")" class="btn btn-primary">Add New Employee</a>
+    <a href="@Url.Action("CreateEmployee", "Employee")" class="btn btn-primary">Add New Employee</a>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    $(document).ready(function () {
-        const pageSize = @Model.PageSize
+    <script>
+        $(document).ready(function () {
+            const pageSize = @Model.PageSize
 
-        function loadPage(page) {
-            $.get('/Employee/GetPageData', { page: page, pageSize: pageSize }, function (data) {
-                $('#employeeTableBody').html(data);
-                window.location.href = '/Employee/Index?page=' + page + '&pageSize=' + pageSize;
+            function loadPage(page) {
+                $.get('/Employee/GetPageData', { page: page, pageSize: pageSize }, function (data) {
+                    $('#employeeTableBody').html(data);
+                    window.location.href = '/Employee/Index?page=' + page + '&pageSize=' + pageSize;
+                });
+            }
+
+            $(document).on('click', '.page-link', function (e) {
+                e.preventDefault();
+                debugger;
+                const page = $(this).data('page');
+                loadPage(page);
             });
-        }
 
-        $(document).on('click', '.page-link', function (e) {
-            e.preventDefault();
-            debugger;
-            const page = $(this).data('page');
-            loadPage(page);
-        });
-
-        $(document).on('click', '.delete-btn', function () {
-            const id = $(this).data('id');
-            debugger;
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "This action cannot be undone!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post('/Employee/DeleteEmployeeAjax', { id: id }, function (res) {
-                        if (res.success) {
-                            Swal.fire('Deleted!', 'Employee has been deleted.', 'success');
-                            loadPage(@Model.CurrentPage);
-                        } else {
-                            Swal.fire('Error', res.message, 'error');
-                        }
-                    });
-                }
+            $(document).on('click', '.delete-btn', function () {
+                const id = $(this).data('id');
+                debugger;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Employee/DeleteEmployeeAjax', { id: id }, function (res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', 'Employee has been deleted.', 'success');
+                                loadPage(@Model.CurrentPage);
+                            } else {
+                                Swal.fire('Error', res.message, 'error');
+                            }
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 
-<style>
-    #departmentChart {
-        max-width: 500px;
-        max-height: 300px;
-        width: 100%;
-        height: auto;
-    }
+    <style>
+        #departmentChart {
+            max-width: 500px;
+            max-height: 300px;
+            width: 100%;
+            height: auto;
+        }
 
-    #designationChart {
-        max-width: 500px;
-        max-height: 300px;
-        width: 100%;
-        height: auto;
-    }
+        #designationChart {
+            max-width: 500px;
+            max-height: 300px;
+            width: 100%;
+            height: auto;
+        }
 
-    /* Style for chart container to display side by side */
-    .chart-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px; /* Adds spacing between the two charts */
-    }
+        /* Style for chart container to display side by side */
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px; /* Adds spacing between the two charts */
+        }
 
-    /* Style for each chart item (canvas) */
-    .chart-item {
-        flex: 1; /* Makes the canvas take equal space */
-        max-width: 45%; /* Optional: Controls the maximum width of each chart */
-        height: auto;
-    }
-</style>
-
+        /* Style for each chart item (canvas) */
+        .chart-item {
+            flex: 1; /* Makes the canvas take equal space */
+            max-width: 45%; /* Optional: Controls the maximum width of each chart */
+            height: auto;
+        }
+    </style>
 
 
