@@ -11,21 +11,21 @@
 @*         </tr> *@
 @*     </thead> *@
 @*     <tbody> *@
-        @* @foreach (var Employee in Model.Employees) *@
-        @* { *@
-        @*     <tr> *@
-        @*         <td>@Employee.EmployeeName</td> *@
-        @*         <td>@Employee.Email</td> *@
-        @*         <td>@Employee.DepartmentName</td> *@
-        @*         <td>@Employee.DesignationName</td> *@
-        @*         <td> *@
-        @*             <a asp-controller="Employee" asp-action="EditEmployee" asp-route-id="@Employee.Id"> Edit </a> *@
-        @*         </td> *@
-        @*         <td> *@
-        @*             <a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-id="@Employee.Id"> Delete </a> *@
-        @*         </td> *@
-        @*     </tr> *@
-        @* } *@
+@* @foreach (var Employee in Model.Employees) *@
+@* { *@
+@*     <tr> *@
+@*         <td>@Employee.EmployeeName</td> *@
+@*         <td>@Employee.Email</td> *@
+@*         <td>@Employee.DepartmentName</td> *@
+@*         <td>@Employee.DesignationName</td> *@
+@*         <td> *@
+@*             <a asp-controller="Employee" asp-action="EditEmployee" asp-route-id="@Employee.Id"> Edit </a> *@
+@*         </td> *@
+@*         <td> *@
+@*             <a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-id="@Employee.Id"> Delete </a> *@
+@*         </td> *@
+@*     </tr> *@
+@* } *@
 @*     </tbody> *@
 @* </table> *@
 @* <a asp-controller="Employee" asp-action="CreateEmployee" class="btn btn-primary">Add New Employee</a> *@
@@ -394,11 +394,38 @@
 </script>
 
 
-    
+
 
 
 
 <h2>Employee List</h2>
+
+
+
+
+<div class="container">
+    <form method="get" class="form-inline mb-3">
+        <label for="pageSize" class="mr-2">Rows per page:</label>
+        <select id="pageSize" name="pageSize" class="form-control" onchange="this.form.submit()">
+            @{
+                var pageSizes = new[] { 5, 10, 20, 50 };
+                foreach (var size in pageSizes)
+                {
+                    if (Model.PageSize == size)
+                    {
+                        @:
+                        <option value="@size" selected>@size</option>
+                    }
+                    else
+                    {
+                        @:
+                        <option value="@size">@size</option>
+                    }
+                }
+            }
+        </select>
+        <input type="hidden" name="page" value="@Model.CurrentPage" />
+    </form>
 
 <table class="table table-bordered" id="employeeTable">
     <thead>
@@ -530,7 +557,6 @@
         height: auto;
     }
 </style>
-
 
 
 
