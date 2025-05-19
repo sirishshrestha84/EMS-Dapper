@@ -399,6 +399,41 @@
 
 
 <h2>Employee List</h2>
+<form asp-action="FilteredIndex" method="get" class="d-flex mb-3 align-items-center gap-2"> 
+    <select name="departmentName" class="form-control me-2">
+        <option value="">All Departments</option> 
+        @if (ViewBag.Departments != null) 
+        { 
+            foreach (var dept in (IEnumerable<dynamic>)ViewBag.Departments) 
+             { 
+                 <option value="@dept.Name">@dept.Name</option> 
+             } 
+         } 
+         else 
+        { 
+            <option disabled>No departments found</option> 
+        } 
+     </select> 
+
+     <select name="designationName" class="form-control me-2"> 
+         <option value="">All Designations</option> 
+        @if (ViewBag.Designations != null) 
+       { 
+            foreach (var des in (IEnumerable<dynamic>)ViewBag.Designations) 
+             { 
+                 <option value="@des.DesignationName">@des.DesignationName</option> 
+            } 
+        } 
+        else
+         { 
+             <option disabled>No designations found</option> 
+         } 
+     </select> 
+
+     <button type="submit" class="btn btn-primary">Filter</button> 
+ </form>
+
+
 <div class="container">
     <form method="get" class="form-inline mb-3">
         <label for="pageSize" class="mr-2">Rows per page:</label>

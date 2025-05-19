@@ -489,6 +489,7 @@ using EMS_Dapper.Unit_Of_Work;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Identity.Client;
 using System.Collections.Generic;
 using System.Data;
@@ -714,6 +715,60 @@ namespace EMS_Dapper.Controllers
             var filename = $"Employees_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
+
+        //public async Task<IActionResult> FilteredIndex(string departmentName, string designationName, int page = 1, int pageSize = 5)
+        //{
+        //    var departments = await _unitOfWork.Employee.GetDepartmentsAsync();
+        //    var designations = await _unitOfWork.Employee.GetDesignationsAsync();
+
+        //    // Create SelectLists
+        //    var departmentSelectList = new SelectList(departments, "Name", "Name", departmentName);
+        //    var designationSelectList = new SelectList(designations, "DesignationName", "DesignationName", designationName);
+
+        //    // Fetch filtered employees (implement your filtering logic here)
+        //    var employees = await _unitOfWork.Employee.GetFilteredEmployeesAsync(departmentName, designationName, page, pageSize);
+        //    var totalCount = await _unitOfWork.Employee.GetFilteredEmployeeCountAsync(departmentName, designationName);
+        //    var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        //    var model = new Pager
+        //    {
+        //        Employees = employees.ToList(),
+        //        CurrentPage = page,
+        //        TotalPages = totalPages,
+        //        PageSize = pageSize,
+        //        DepartmentFilter = departmentName,
+        //        DesignationFilter = designationName
+        //    };
+
+        //    // Pass SelectLists to ViewBag for rendering
+        //    ViewBag.DepartmentSelectList = departmentSelectList;
+        //    ViewBag.DesignationSelectList = designationSelectList;
+
+        //    return View(model);
+        //}
+
+
+        public async Task<IActionResult> FilteredIndex(string? departmentName, string? designationName, int page = 1, int pageSize = 5)
+        {
+            var employees = await _unitOfWork.Employee.GetFilteredEmployeesAsync(departmentName, designationName, page, pageSize);
+            var totalCount = await _unitOfWork.Employee.GetFilteredEmployeeCountAsync(departmentName, designationName);
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var model = new Pager
+            {
+                Employees = employees.ToList(),
+                CurrentPage = page,
+                TotalPages = totalPages,
+                PageSize = pageSize,
+                DepartmentFilter = departmentName,
+                DesignationFilter = designationName
+            };
+            ViewBag.Departments = await _unitOfWork.Employee.GetDepartmentsAsync();
+            ViewBag.Designations = await _unitOfWork.Employee.GetDesignationsAsync();
+
+            return View("Index", model); // Reuse your Index view
+        }
+
 
 
     }

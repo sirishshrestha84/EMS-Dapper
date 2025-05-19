@@ -1,4 +1,6 @@
-﻿namespace EMS_Dapper.Models
+﻿using Microsoft.Identity.Client;
+
+namespace EMS_Dapper.Models
 {
     public class Pager
     {
@@ -8,6 +10,9 @@
         public int PageSize { get; set; }
         public int StartPage { get; set; }
         public int EndPage { get; set; } 
+
+        public string DepartmentFilter { get; set; }
+        public string DesignationFilter{get; set; }
 
         //public Pager()
         //{

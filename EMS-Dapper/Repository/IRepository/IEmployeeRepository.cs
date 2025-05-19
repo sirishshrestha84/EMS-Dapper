@@ -19,5 +19,8 @@ namespace EMS_Dapper.Repository.IRepository
         Task<IEnumerable<DepartmentChartData>> GetEmployeeCountByDepartmentAsync();
 
         Task<IEnumerable<DesignationChartData>> GetEmployeeCountByDesignationAsync();
+
+        Task<IEnumerable<Employee>> GetFilteredEmployeesAsync(string? departmentName, string? designationName, int page, int pageSize);
+        Task<int> GetFilteredEmployeeCountAsync(string? departmentName, string? designationName);
     }
 }

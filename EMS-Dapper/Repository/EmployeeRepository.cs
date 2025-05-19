@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DocumentFormat.OpenXml.Drawing;
 using EMS_Dapper.Models;
 using EMS_Dapper.Repository.IRepository;
 using Microsoft.Identity.Client;
@@ -116,5 +117,56 @@ namespace EMS_Dapper.Repository
                 return await connection.QueryAsync<Employee>(sql);
             }
         }
+
+        public async Task<IEnumerable<Employee>> GetFilteredEmployeesAsync(string? departmentName, string? designationName, int page, int pageSize)
+        {
+            using var connection = _context.CreateConnection();
+
+            var sql = @"
+SELECT 
+            e.Id, 
+            e.Name AS EmployeeName, 
+            e.Email,
+            d.Name AS DepartmentName,
+            des.DesignationName
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+        INNER JOIN Designations des ON e.DesignationId = des.DesignationId
+        WHERE (@DepartmentName IS NULL OR d.Name = @DepartmentName)
+          AND (@DesignationName IS NULL OR des.DesignationName = @DesignationName)
+        ORDER BY e.Id
+        OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+            return await connection.QueryAsync<Employee>(sql, new
+            {
+                DepartmentName = departmentName,
+                DesignationName = designationName,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+
+            });
+        }
+
+        public async Task<int> GetFilteredEmployeeCountAsync(string? departmentName, string? designationName)
+        {
+            using var connection = _context.CreateConnection();
+
+            var sql = @"
+        SELECT COUNT(*)
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+        INNER JOIN Designations des ON e.DesignationId = des.DesignationId
+        WHERE (@DepartmentName IS NULL OR d.Name = @DepartmentName)
+          AND (@DesignationName IS NULL OR des.DesignationName = @DesignationName)";
+
+            return await connection.ExecuteScalarAsync<int>(sql, new
+            {
+                DepartmentName = departmentName,
+                DesignationName = designationName
+            });
+        }
+
+
+
     }
 }
